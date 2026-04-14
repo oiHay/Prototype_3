@@ -6,8 +6,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _jumpForce = 10.0f;
     [SerializeField] private float _gravityModifier = 1.0f;
     [SerializeField] private bool _isGrounded;
-    
+
+    // private bool _isGameOver = false;
     private Rigidbody _rb;
+
+    public static event Action OnGameOver;
     
     private void Start()
     {
@@ -29,6 +32,13 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             _isGrounded = true; // A boolean torna-se verdadeira
+        }
+
+        if (collision.gameObject.CompareTag("Obstacle"))
+        {
+            Debug.Log("Game Over!");
+            // _isGameOver = true;
+            OnGameOver?.Invoke();
         }
     }
 }
