@@ -3,18 +3,24 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    [Header("Reference")] 
-    [SerializeField] private Animator _anim;
+    [Header("Particles")]
     [SerializeField] private ParticleSystem _collisionParticle;
     [SerializeField] private ParticleSystem _runParticle;
 
-    [Header("Jump Parameters")]
+    [Header("Sound")] 
+    [SerializeField] private AudioClip _jumpClip;
+    [SerializeField] private AudioClip _collisionClip;
+
+    [Header("Configurações do Pulo")]
     [SerializeField] private float _jumpForce = 10.0f;
     [SerializeField] private float _gravityModifier = 1.0f;
-    [SerializeField] private bool _isGrounded;
-
-    private bool _isGameOver;
+    
+    [Header("Variáveis Internas  ")] 
+    private Animator _anim;
     private Rigidbody _rb;
+    private AudioSource _source;
+    private bool _isGrounded;
+    private bool _isGameOver;
 
     public static event Action OnGameOver;
     
@@ -22,6 +28,7 @@ public class PlayerController : MonoBehaviour
     {
         _rb = GetComponent<Rigidbody>();
         _anim = GetComponent<Animator>();
+        _source = GetComponent<AudioSource>();
         
         Physics.gravity *= _gravityModifier; //  gravity = gravity * _gravityModifier
     }
@@ -40,6 +47,7 @@ public class PlayerController : MonoBehaviour
         _isGrounded = false; // Por estar no ar, a boolean torna-se falsa, impedindo que o if statement seja lido
         _anim.SetTrigger("Jump_trig");
         _runParticle.Stop();
+        _source.PlayOneShot(_jumpClip, 1.0f);
     }
 
     private void OnCollisionEnter(Collision collision) //Se o player estiver colidindo com algo
@@ -61,6 +69,7 @@ public class PlayerController : MonoBehaviour
             _anim.SetBool("Death_b", true);
             _anim.SetInteger("DeathType_int", 1);
             _collisionParticle.Play();
+            _source.PlayOneShot(_collisionClip, 1.0f);
             OnGameOver?.Invoke();
         }
     }
