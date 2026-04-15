@@ -5,6 +5,8 @@ public class PlayerController : MonoBehaviour
 {
     [Header("Reference")] 
     [SerializeField] private Animator _anim;
+    [SerializeField] private ParticleSystem _collisionParticle;
+    [SerializeField] private ParticleSystem _runParticle;
 
     [Header("Jump Parameters")]
     [SerializeField] private float _jumpForce = 10.0f;
@@ -37,13 +39,19 @@ public class PlayerController : MonoBehaviour
         _rb.AddForce(Vector3.up * _jumpForce, ForceMode.Impulse);
         _isGrounded = false; // Por estar no ar, a boolean torna-se falsa, impedindo que o if statement seja lido
         _anim.SetTrigger("Jump_trig");
+        _runParticle.Stop();
     }
 
     private void OnCollisionEnter(Collision collision) //Se o player estiver colidindo com algo
     {
-        if (collision.gameObject.CompareTag("Ground"))
+        if (collision.gameObject.CompareTag("Ground") && !_isGameOver)
         {
             _isGrounded = true; // A boolean torna-se verdadeira
+            _runParticle.Play();
+        }
+        else
+        {
+            _runParticle.Stop();
         }
 
         if (collision.gameObject.CompareTag("Obstacle"))
@@ -52,6 +60,7 @@ public class PlayerController : MonoBehaviour
             _isGameOver = true;
             _anim.SetBool("Death_b", true);
             _anim.SetInteger("DeathType_int", 1);
+            _collisionParticle.Play();
             OnGameOver?.Invoke();
         }
     }
