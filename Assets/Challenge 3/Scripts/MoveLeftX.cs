@@ -5,20 +5,30 @@ using UnityEngine;
 public class MoveLeftX : MonoBehaviour
 {
     public float speed;
-    private PlayerControllerX playerControllerScript;
     private float leftBound = -10;
+    
+    private bool _gameOver;
 
-    // Start is called before the first frame update
-    void Start()
+    void OnEnable()
     {
-        playerControllerScript = GameObject.Find("Player").GetComponent<PlayerControllerX>();
+        PlayerControllerX.OnGameOver += HandleGameOver;
     }
 
+    void OnDisable()
+    {
+        PlayerControllerX.OnGameOver -= HandleGameOver;
+    }
+
+    private void HandleGameOver()
+    {
+        _gameOver = true;
+    }
+    
     // Update is called once per frame
     void Update()
     {
         // If game is not over, move to the left
-        if (!playerControllerScript.gameOver)
+        if (!_gameOver)
         {
             transform.Translate(Vector3.left * (speed * Time.deltaTime), Space.World);
         }

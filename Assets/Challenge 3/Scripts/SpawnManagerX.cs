@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class SpawnManagerX : MonoBehaviour
 {
@@ -8,13 +10,27 @@ public class SpawnManagerX : MonoBehaviour
     private float spawnDelay = 2;
     private float spawnInterval = 1.5f;
 
-    private PlayerControllerX playerControllerScript;
+    private bool _gameOver;
 
     // Start is called before the first frame update
     void Start()
     {
         InvokeRepeating("SpawnObjects", spawnDelay, spawnInterval);
-        playerControllerScript = GameObject.Find("Player").GetComponent<PlayerControllerX>();
+    }
+
+    void OnEnable()
+    {
+        PlayerControllerX.OnGameOver += HandleGameOver;
+    }
+
+    void OnDisable()
+    {
+        PlayerControllerX.OnGameOver -= HandleGameOver;
+    }
+
+    private void HandleGameOver()
+    {
+        _gameOver = true;
     }
 
     // Spawn obstacles
@@ -25,7 +41,7 @@ public class SpawnManagerX : MonoBehaviour
         int index = Random.Range(0, objectPrefabs.Length);
 
         // If game is still active, spawn new object
-        if (!playerControllerScript.gameOver)
+        if (!_gameOver)
         {
             Instantiate(objectPrefabs[index], spawnLocation, objectPrefabs[index].transform.rotation);
         }

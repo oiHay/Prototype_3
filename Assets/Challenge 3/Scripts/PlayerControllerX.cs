@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -19,9 +20,11 @@ public class PlayerControllerX : MonoBehaviour
     [SerializeField] private ParticleSystem explosionParticle;
     [SerializeField] private ParticleSystem fireworksParticle;
     
+    public static event Action OnGameOver;
+    
     private Rigidbody playerRb;
     private AudioSource playerAudio;
-    [HideInInspector] public bool gameOver;
+    public bool gameOver;
     
     // Start is called before the first frame update
     void Start()
@@ -62,6 +65,7 @@ public class PlayerControllerX : MonoBehaviour
         {
             HandleExplosion();
             gameOver = true;
+            OnGameOver?.Invoke();
             Destroy(other.gameObject);
             Destroy(gameObject);
         } 
