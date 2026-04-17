@@ -15,12 +15,19 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _jumpForce = 10.0f;
     [SerializeField] private float _gravityModifier = 1.0f;
     
-    [Header("Variáveis Internas  ")] 
+    [Header("Variáveis Internas")] 
     private Animator _anim;
     private Rigidbody _rb;
     private AudioSource _source;
     private bool _isGrounded;
     private bool _isGameOver;
+    
+    private float _originalGravity;
+
+    private void Awake()
+    {
+        _originalGravity = Physics.gravity.y;
+    } 
 
     public static event Action OnGameOver;
     
@@ -39,6 +46,11 @@ public class PlayerController : MonoBehaviour
         {
             OnJump();
         }
+    }
+    
+    private void OnDestroy()
+    {
+        Physics.gravity = new Vector3(0, _originalGravity, 0);
     }
 
     private void OnJump()

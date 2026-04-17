@@ -25,7 +25,13 @@ public class PlayerControllerX : MonoBehaviour
     private Rigidbody playerRb;
     private AudioSource playerAudio;
     public bool gameOver;
-    
+    private float _originalGravity;
+
+    private void Awake()
+    {
+        _originalGravity = Physics.gravity.y;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -56,6 +62,11 @@ public class PlayerControllerX : MonoBehaviour
             playerRb.AddForce(Vector3.up * 5, ForceMode.Impulse); // Apply a small upward force at the start of the game
             playerAudio.PlayOneShot(bounceSound, 1.0f);
         }
+    }
+
+    private void OnDestroy()
+    {
+        Physics.gravity = new Vector3(0, _originalGravity, 0);
     }
 
     private void OnCollisionEnter(Collision other)

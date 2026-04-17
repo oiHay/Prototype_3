@@ -25,6 +25,12 @@ public class CustomSceneManager : MonoBehaviour
         {
             LoadSceneByIndex(0);
         }
+        
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            string _currenteScene = SceneManager.GetActiveScene().name;
+            SceneManager.LoadScene(_currenteScene);
+        }
     }
 
     public void LoadSceneByIndex(int index)
